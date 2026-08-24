@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索 - 红色文化传播网</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .search-input {
+      width: 100%;
+      padding: 18px 24px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 16px;
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+    .result-group { margin-bottom: 40px; }
+    .result-group h3 { font-size: 18px; margin-bottom: 16px; color: var(--red); }
+    .result-item { padding: 16px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .result-item a { font-weight: 600; }
+    .result-item p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <a href="index.html" class="nav-logo">红色文化传播网</a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="heroes.html">英雄人物</a></li>
+        <li><a href="places.html">红色地点</a></li>
+        <li><a href="events.html">历史事件</a></li>
+        <li><a href="quiz.html">知识考核</a></li>
+        <li><a href="about.html">关于本站</a></li>
+      </ul>
+    </nav>
+    <div class="nav-search" id="searchBtn">🔍</div>
+    <div class="nav-toggle" id="navToggle">☰</div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="container">
+        <p class="hero-eyebrow">Search</p>
+        <h1 class="hero-title">搜索</h1>
+      </div>
+    </section>
+
+    <section class="section section-light">
+      <div class="container" style="max-width: 800px;">
+        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词搜索人物、地点、事件…">
+        <div id="searchResults"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">红色文化传播网</div>
+          <p class="footer-desc">铭记历史，缅怀先烈，<br>在红色文化中汲取前行力量。</p>
+        </div>
+        <div>
+          <h4 class="footer-title">走进历史</h4>
+          <ul class="footer-links">
+            <li><a href="heroes.html">英雄人物</a></li>
+            <li><a href="places.html">红色地点</a></li>
+            <li><a href="events.html">历史事件</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">学习互动</h4>
+          <ul class="footer-links">
+            <li><a href="quiz.html">知识考核</a></li>
+            <li><a href="rank.html">排行榜</a></li>
+            <li><a href="about.html">关于本站</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 红色文化传播网 · 传承红色基因 弘扬革命文化</div>
+    </div>
+  </footer>
+
+
+  <script src="data/heroes.js"></script>
+  <script src="data/places.js"></script>
+  <script src="data/events.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('searchInput');
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q') || '';
+      input.value = q;
+      function doSearch(key) {
+        const k = key.trim();
+        const results = document.getElementById('searchResults');
+        if (!k) { results.innerHTML = ''; return; }
+        const all = [
+          ...HEROES.map(h => ({ ...h, type: 'hero', label: '英雄人物' })),
+          ...PLACES.map(p => ({ ...p, type: 'place', label: '红色地点' })),
+          ...EVENTS.map(e => ({ ...e, type: 'event', label: '历史事件' }))
+        ];
+        const filtered = all.filter(item => item.n.includes(k) || (item.h && item.h.includes(k)) || (item.t && item.t.includes(k)));
+        if (!filtered.length) {
+          results.innerHTML = '<p style="text-align:center;color:var(--text-secondary)">未找到相关结果</p>';
+          return;
+        }
+        const groups = {};
+        filtered.forEach(item => {
+          if (!groups[item.label]) groups[item.label] = [];
+          groups[item.label].push(item);
+        });
+        results.innerHTML = Object.entries(groups).map(([label, items]) => `
+          <div class="result-group">
+            <h3>${label}</h3>
+            ${items.map(item => `
+              <div class="result-item">
+                <a href="detail.html?type=${item.type}&id=${item.id}">${item.n}</a>
+                <p>${(item.h || item.t || '').slice(0, 60)}…</p>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+      }
+      input.addEventListener('input', e => doSearch(e.target.value));
+      if (q) doSearch(q);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识考核 - 红色文化传播网</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .quiz-container { max-width: 720px; margin: 0 auto; padding: 140px 24px 80px; }
+    .progress { height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; margin-bottom: 40px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.3s; }
+    .question { font-size: 22px; font-weight: 700; line-height: 1.4; margin-bottom: 32px; }
+    .options { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .option {
+      padding: 18px 20px;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 16px;
+    }
+    .option:hover { border-color: var(--red); background: rgba(185,28,28,0.02); }
+    .option.correct { border-color: #22c55e; background: rgba(34,197,94,0.06); }
+    .option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.06); }
+    .option.disabled { pointer-events: none; opacity: 0.7; }
+    .explain { background: #f9fafb; border-radius: 16px; padding: 20px; font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+    .quiz-actions { display: flex; gap: 16px; }
+    .result-box { text-align: center; padding: 60px 24px; }
+    .result-score { font-size: 56px; font-weight: 800; color: var(--red); }
+    .result-title { font-size: 24px; margin: 16px 0 8px; }
+    .meta { font-size: 13px; color: var(--red); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <a href="index.html" class="nav-logo">红色文化传播网</a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="heroes.html">英雄人物</a></li>
+        <li><a href="places.html">红色地点</a></li>
+        <li><a href="events.html">历史事件</a></li>
+        <li><a href="quiz.html">知识考核</a></li>
+        <li><a href="about.html">关于本站</a></li>
+      </ul>
+    </nav>
+    <div class="nav-search" id="searchBtn">🔍</div>
+    <div class="nav-toggle" id="navToggle">☰</div>
+  </header>
+
+  <main>
+    <div class="quiz-container" id="quizApp">
+      <p class="meta">Red Quiz · 红色知识考核</p>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div id="quizContent"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">红色文化传播网</div>
+          <p class="footer-desc">铭记历史，缅怀先烈，<br>在红色文化中汲取前行力量。</p>
+        </div>
+        <div>
+          <h4 class="footer-title">走进历史</h4>
+          <ul class="footer-links">
+            <li><a href="heroes.html">英雄人物</a></li>
+            <li><a href="places.html">红色地点</a></li>
+            <li><a href="events.html">历史事件</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">学习互动</h4>
+          <ul class="footer-links">
+            <li><a href="quiz.html">知识考核</a></li>
+            <li><a href="rank.html">排行榜</a></li>
+            <li><a href="about.html">关于本站</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 红色文化传播网 · 传承红色基因 弘扬革命文化</div>
+    </div>
+  </footer>
+
+
+  <script src="data/quiz.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    (() => {
+      const app = document.getElementById('quizApp');
+      if (!app || typeof QUIZ === 'undefined') { app.innerHTML = '<p>题库加载失败</p>'; return; }
+
+      let questions = QUIZ.slice().sort(() => Math.random() - 0.5).slice(0, 20);
+      let current = 0;
+      let correct = 0;
+      let answered = false;
+
+      function render() {
+        const q = questions[current];
+        const progress = ((current) / questions.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        const content = document.getElementById('quizContent');
+        content.innerHTML = `
+          <div class="question">${current + 1}. ${q.q}</div>
+          <div class="options" id="options">
+            ${q.options.map((o, i) => `<div class="option" data-idx="${i}">${o}</div>`).join('')}
+          </div>
+          <div id="explain"></div>
+          <div class="quiz-actions" id="actions" style="display:none">
+            <button class="btn btn-light" id="nextBtn">下一题</button>
+          </div>
+        `;
+        document.querySelectorAll('.option').forEach(el => {
+          el.addEventListener('click', () => answer(parseInt(el.dataset.idx, 10)));
+        });
+      }
+
+      function answer(idx) {
+        if (answered) return;
+        answered = true;
+        const q = questions[current];
+        const options = document.querySelectorAll('.option');
+        options[q.answer].classList.add('correct');
+        if (idx !== q.answer) {
+          options[idx].classList.add('wrong');
+        } else {
+          correct++;
+        }
+        options.forEach(o => o.classList.add('disabled'));
+        document.getElementById('explain').innerHTML = `<div class="explain"><strong>解析：</strong>${q.explain}</div>`;
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.textContent = current === questions.length - 1 ? '查看结果' : '下一题';
+        document.getElementById('actions').style.display = 'flex';
+        nextBtn.addEventListener('click', () => {
+          current++;
+          if (current >= questions.length) showResult();
+          else { answered = false; render(); }
+        });
+      }
+
+      function showResult() {
+        const percent = Math.round((correct / questions.length) * 100);
+        const badge = percent >= 90 ? '红色领袖' : percent >= 70 ? '红色骨干' : '红色行者';
+        try {
+          const list = JSON.parse(localStorage.getItem('redQuizRank') || '[]');
+          list.push({ percent, badge, date: new Date().toLocaleString('zh-CN') });
+          localStorage.setItem('redQuizRank', JSON.stringify(list.slice(-20)));
+        } catch (e) {}
+        document.getElementById('quizApp').innerHTML = `
+          <div class="result-box">
+            <div class="result-score">${percent}%</div>
+            <div class="result-title">${badge}</div>
+            <p class="hero-desc">答对 ${correct} / ${questions.length} 题</p>
+            <a href="rank.html" class="btn btn-light" style="margin-right:12px">查看排行榜</a>
+            <a href="quiz.html" class="btn" style="background:var(--red);color:#fff">再来一次</a>
+          </div>
+        `;
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>

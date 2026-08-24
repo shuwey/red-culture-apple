@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>排行榜 - 红色文化传播网</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .rank-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+    .rank-table th, .rank-table td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .rank-table th { font-size: 13px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; }
+    .rank-table td { font-size: 15px; }
+    .rank-table tr:hover { background: rgba(0,0,0,0.01); }
+  </style>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <a href="index.html" class="nav-logo">红色文化传播网</a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="heroes.html">英雄人物</a></li>
+        <li><a href="places.html">红色地点</a></li>
+        <li><a href="events.html">历史事件</a></li>
+        <li><a href="quiz.html">知识考核</a></li>
+        <li><a href="about.html">关于本站</a></li>
+      </ul>
+    </nav>
+    <div class="nav-search" id="searchBtn">🔍</div>
+    <div class="nav-toggle" id="navToggle">☰</div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="container">
+        <p class="hero-eyebrow">Rank</p>
+        <h1 class="hero-title">排行榜</h1>
+        <p class="hero-desc">每一次答题，都是对红色历史的一次重温。</p>
+      </div>
+    </section>
+
+    <section class="section section-light">
+      <div class="container">
+        <div id="rankContent">
+          <table class="rank-table">
+            <thead>
+              <tr><th>排名</th><th>称号</th><th>正确率</th><th>时间</th></tr>
+            </thead>
+            <tbody id="rankBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">红色文化传播网</div>
+          <p class="footer-desc">铭记历史，缅怀先烈，<br>在红色文化中汲取前行力量。</p>
+        </div>
+        <div>
+          <h4 class="footer-title">走进历史</h4>
+          <ul class="footer-links">
+            <li><a href="heroes.html">英雄人物</a></li>
+            <li><a href="places.html">红色地点</a></li>
+            <li><a href="events.html">历史事件</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">学习互动</h4>
+          <ul class="footer-links">
+            <li><a href="quiz.html">知识考核</a></li>
+            <li><a href="rank.html">排行榜</a></li>
+            <li><a href="about.html">关于本站</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 红色文化传播网 · 传承红色基因 弘扬革命文化</div>
+    </div>
+  </footer>
+
+
+  <script src="js/main.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let data = [];
+      try {
+        data = JSON.parse(localStorage.getItem('redQuizRank') || '[]');
+      } catch (e) { data = []; }
+      const tbody = document.getElementById('rankBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">暂无记录，快去答题吧！</td></tr>';
+        return;
+      }
+      data.sort((a, b) => b.percent - a.percent);
+      tbody.innerHTML = data.map((r, i) => `
+        <tr>
+          <td>#${i + 1}</td>
+          <td>${r.badge || '-'}</td>
+          <td>${r.percent}%</td>
+          <td>${r.date || '-'}</td>
+        </tr>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

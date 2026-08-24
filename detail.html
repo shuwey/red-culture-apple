@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>详情 - 红色文化传播网</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .detail-hero {
+      padding-top: 120px;
+      padding-bottom: 60px;
+      text-align: center;
+      background: var(--bg);
+    }
+    .detail-image {
+      max-width: 720px;
+      margin: 40px auto 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    }
+    .detail-image img { width: 100%; height: auto; }
+    .detail-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .detail-body p {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .detail-body h3 {
+      font-size: 24px;
+      margin: 40px 0 16px;
+    }
+    .detail-meta {
+      color: var(--red);
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <a href="index.html" class="nav-logo">红色文化传播网</a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="heroes.html">英雄人物</a></li>
+        <li><a href="places.html">红色地点</a></li>
+        <li><a href="events.html">历史事件</a></li>
+        <li><a href="quiz.html">知识考核</a></li>
+        <li><a href="about.html">关于本站</a></li>
+      </ul>
+    </nav>
+    <div class="nav-search" id="searchBtn">🔍</div>
+    <div class="nav-toggle" id="navToggle">☰</div>
+  </header>
+
+  <main>
+    <section class="detail-hero">
+      <div class="container">
+        <p class="detail-meta" id="detailMeta">详情</p>
+        <h1 class="hero-title" id="detailTitle">加载中…</h1>
+        <div class="detail-image" id="detailImage"></div>
+      </div>
+    </section>
+
+    <section class="section section-light">
+      <div class="detail-body" id="detailBody"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">红色文化传播网</div>
+          <p class="footer-desc">铭记历史，缅怀先烈，<br>在红色文化中汲取前行力量。</p>
+        </div>
+        <div>
+          <h4 class="footer-title">走进历史</h4>
+          <ul class="footer-links">
+            <li><a href="heroes.html">英雄人物</a></li>
+            <li><a href="places.html">红色地点</a></li>
+            <li><a href="events.html">历史事件</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">学习互动</h4>
+          <ul class="footer-links">
+            <li><a href="quiz.html">知识考核</a></li>
+            <li><a href="rank.html">排行榜</a></li>
+            <li><a href="about.html">关于本站</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 红色文化传播网 · 传承红色基因 弘扬革命文化</div>
+    </div>
+  </footer>
+
+
+  <script src="data/heroes.js"></script>
+  <script src="data/places.js"></script>
+  <script src="data/events.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const type = params.get('type');
+      const id = parseInt(params.get('id'), 10);
+      let data;
+      let label = '';
+      if (type === 'hero') { data = HEROES; label = '英雄人物'; }
+      else if (type === 'place') { data = PLACES; label = '红色地点'; }
+      else if (type === 'event') { data = EVENTS; label = '历史事件'; }
+      else { document.getElementById('detailTitle').textContent = '未找到'; return; }
+
+      const item = data.find(d => d.id === id);
+      if (!item) { document.getElementById('detailTitle').textContent = '未找到'; return; }
+
+      document.getElementById('detailMeta').textContent = `${label} · ${item.cat || ''}`;
+      document.getElementById('detailTitle').textContent = item.n;
+      document.getElementById('detailImage').innerHTML = `<img src="${item.img}" alt="${item.n}">`;
+      document.getElementById('detailBody').innerHTML = `
+        <p>${item.h}</p>
+        <h3>历史经过</h3>
+        <p>${item.e}</p>
+        <h3>历史意义</h3>
+        <p>${item.l}</p>
+      `;
+    });
+  </script>
+</body>
+</html>

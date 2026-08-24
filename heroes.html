@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英雄人物 - 红色文化传播网</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="nav" id="nav">
+    <a href="index.html" class="nav-logo">红色文化传播网</a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="heroes.html">英雄人物</a></li>
+        <li><a href="places.html">红色地点</a></li>
+        <li><a href="events.html">历史事件</a></li>
+        <li><a href="quiz.html">知识考核</a></li>
+        <li><a href="about.html">关于本站</a></li>
+      </ul>
+    </nav>
+    <div class="nav-search" id="searchBtn">🔍</div>
+    <div class="nav-toggle" id="navToggle">☰</div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="container">
+        <p class="hero-eyebrow">Heroic Figures</p>
+        <h1 class="hero-title">英雄人物</h1>
+        <p class="hero-desc">从革命先驱到开国元勋，铭记那些为民族独立和人民解放奉献一生的名字。</p>
+      </div>
+    </section>
+
+    <section class="section section-light">
+      <div class="container">
+        <div class="cards" id="heroCards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">红色文化传播网</div>
+          <p class="footer-desc">铭记历史，缅怀先烈，<br>在红色文化中汲取前行力量。</p>
+        </div>
+        <div>
+          <h4 class="footer-title">走进历史</h4>
+          <ul class="footer-links">
+            <li><a href="heroes.html">英雄人物</a></li>
+            <li><a href="places.html">红色地点</a></li>
+            <li><a href="events.html">历史事件</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">学习互动</h4>
+          <ul class="footer-links">
+            <li><a href="quiz.html">知识考核</a></li>
+            <li><a href="rank.html">排行榜</a></li>
+            <li><a href="about.html">关于本站</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">关于本站</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">项目介绍</a></li>
+            <li><a href="about.html#contact">联系我们</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 红色文化传播网 · 传承红色基因 弘扬革命文化</div>
+    </div>
+  </footer>
+
+
+  <script src="data/heroes.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ai.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('heroCards');
+      if (!container || typeof HEROES === 'undefined') return;
+      container.innerHTML = HEROES.map(h => `
+        <article class="card">
+          <div class="card-image">
+            <img src="${h.img}" alt="${h.n}">
+          </div>
+          <div class="card-body">
+            <p class="card-label">${h.cat || '党史人物'}</p>
+            <h3 class="card-title">${h.n}</h3>
+            <p class="card-text">${h.h.slice(0, 80)}…</p>
+            <a href="detail.html?type=hero&id=${h.id}" class="card-link">查看详情 →</a>
+          </div>
+        </article>
+      `).join('');
+    });
+  </script>
+</body>
+</html>
