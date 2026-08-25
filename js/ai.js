@@ -46,7 +46,6 @@
     '.ai-input button{height:38px;padding:0 16px;border-radius:999px;border:none;' +
     'background:linear-gradient(135deg,#f0c22e,#c98a0a);color:#4a2800;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}' +
     '.ai-input button:hover{transform:translateY(-1px);}' +
-    '.ai-privacy{padding:8px 14px 0;font-size:11px;color:rgba(255,220,150,.55);text-align:center;line-height:1.5;}' +
     '.ai-typing{display:flex;gap:4px;padding:10px 14px;}' +
     '.ai-typing span{width:8px;height:8px;border-radius:50%;background:rgba(255,207,51,.5);animation:aiTyping 1.4s infinite;}' +
     '.ai-typing span:nth-child(2){animation-delay:.2s;}' +
@@ -74,7 +73,6 @@
       '</div>' +
       '<div class="ai-body" id="aiBody" aria-live="polite" aria-atomic="false"></div>' +
       '<div class="ai-quick" id="aiQuick"></div>' +
-      '<div class="ai-privacy">为持续改进回答质量，你的提问与回复会被匿名记录。</div>' +
       '<div class="ai-input">' +
         '<input type="text" id="aiText" placeholder="向小红提问..." aria-label="提问">' +
         '<button id="aiSend">发送</button>' +
@@ -151,7 +149,7 @@
     KB.push({ k: ['英雄', '人物', '先烈'], r: '本站英雄人物库收录了毛泽东、刘胡兰、黄继光等' + heroCount + '位英雄模范，去 <a href="heroes.html">英雄人物库</a> 看看吧。' });
     KB.push({ k: ['地点', '圣地', '旧址', '遗址'], r: '红色地点板块收录了嘉兴南湖红船、井冈山、延安等' + placeCount + '处革命圣地，去 <a href="places.html">红色圣地</a> 看看。' });
     KB.push({ k: ['事件', '历史', '时间轴'], r: '历史事件板块梳理了从五四运动到改革开放的' + eventCount + '件大事，去 <a href="events.html">历史事件</a> 看看。' });
-    KB.push({ k: ['考试', '答题', '测验', '考核', '题目', '徽章'], r: '主页的"红色知识考核"板块有45道题、4个难度、10个徽章等你挑战，回 <a href="quiz.html">主页</a> 试试你的红色知识储备吧。' });
+    KB.push({ k: ['考试', '答题', '测验', '考核', '题目', '徽章'], r: '红色知识考核从45道题库中随机抽取20道题，答完按正确率给出称号，回 <a href="quiz.html">知识考核</a> 试试你的红色知识储备吧。' });
     KB.push({ k: ['搜索', '检索', '查找'], r: '导航栏有全站搜索框，输入关键词即可检索站内全部英雄、圣地和事件。也可以到 <a href="search.html">搜索页</a> 查看。' });
     KB.push({ k: ['关于', '出处', '来源', '版权'], r: '关于本站的图片出处、史料来源和技术说明，请查看 <a href="about.html">关于/史料来源</a> 页面。' });
 
@@ -416,36 +414,7 @@
         }
       }
       push(reply, 'bot');
-      logQA(v, reply);
     }, 500 + Math.random() * 300);
-  }
-
-  // 问答记录：匿名提交到 Netlify Forms，用于后续内容维护
-  var logged = new Set();
-  try {
-    var cached = localStorage.getItem('ai-qa-last');
-    if (cached) logged.add(cached);
-  } catch (e) {}
-
-  function logQA(q, a) {
-    if (!q || !a) return;
-    var key = (q + '|' + a).trim();
-    if (logged.has(key)) return;
-
-    var body = 'form-name=qa-log' +
-      '&question=' + encodeURIComponent(q) +
-      '&answer=' + encodeURIComponent(a.replace(/<[^>]+>/g, ' ')) +
-      '&page=' + encodeURIComponent(location.href) +
-      '&ts=' + encodeURIComponent(new Date().toISOString());
-
-    fetch('about.html', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body
-    }).then(function () {
-      logged.add(key);
-      try { localStorage.setItem('ai-qa-last', key); } catch (e) {}
-    }).catch(function () {});
   }
 
   /* ---- 事件绑定 ---- */
