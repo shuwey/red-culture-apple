@@ -4,13 +4,12 @@
 
 ## 在线访问
 
-待部署后补充。
+https://shuwey.github.io/red-culture-apple/
 
 ## 技术栈
 
 - 静态 HTML / CSS / JavaScript
-- 腾讯云 CloudBase 静态托管
-- GitHub Actions 自动部署
+- GitHub Pages 托管
 
 ## 本地预览
 
@@ -42,20 +41,7 @@ python3 -m http.server 9001
 
 ## 自动部署
 
-本仓库使用 GitHub Actions 推送到腾讯云 CloudBase。
-
-所需 Secrets：
-
-- `TENCENTCLOUD_SECRET_ID`
-- `TENCENTCLOUD_SECRET_KEY`
-- `TCB_ENV_ID`
-
-部署脚本：
-
-```yaml
-tcb login --apiKeyId "$TENCENTCLOUD_SECRET_ID" --apiKey "$TENCENTCLOUD_SECRET_KEY"
-tcb hosting deploy ./ -e "$TCB_ENV_ID"
-```
+推送 `main` 分支后，GitHub Pages 会自动构建并发布站点，无需额外配置。
 
 ## 与原项目的关系
 
